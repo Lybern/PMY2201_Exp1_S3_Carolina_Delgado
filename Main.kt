@@ -61,25 +61,133 @@ class Repartidor(
     }
 }
 
+// ============================================================================
+// PASO 2: ANOTACIONES PERSONALIZADAS Y METAPROGRAMACIÓN (REFLECTION)
+// ============================================================================
+
 /**
- * Modela un producto de la pizzería con sus ingredientes y precio.
+ * PASO 2 (Anotaciones):
+ * Anotación personalizada @Promocionable para identificar pizzas o combos que califican
+ * para promociones especiales.
+ * Configurada con @Target(AnnotationTarget.CLASS) y @Retention(AnnotationRetention.RUNTIME)
+ * para permitir su análisis dinámico mediante Reflection en tiempo de ejecución.
  */
-class Producto(
+@Target(AnnotationTarget.CLASS)
+@Retention(AnnotationRetention.RUNTIME)
+annotation class Promocionable(
+    val descripcion: String = "Producto o combo elegible para promociones especiales",
+    val descuentoAdicional: Double = 0.05
+)
+
+/**
+ * Modela un producto de la pizzería con sus ingredientes, precio y categoría.
+ * PASO 2 & PASO 3: Se añade soporte de categoría ("Pizza", "Combo", "Bebida", "Ingrediente")
+ * y se habilita como clase 'open' para permitir productos promocionales anotados.
+ */
+open class Producto(
     val nombre: String,
     val precio: Double,
-    val ingredientes: List<String>
+    val ingredientes: List<String>,
+    val categoria: String = "Pizza"
 ) {
     init {
         require(precio.isFinite() && precio > 0) { "El precio debe ser positivo y finito." }
     }
 
     /**
-     * Retorna la descripción completa del producto con sus ingredientes y precio.
+     * Retorna la descripción completa del producto con sus ingredientes, precio y categoría.
+     * PASO 2: Detecta dinámicamente mediante Reflection si la clase está anotada con @Promocionable.
      */
-    fun detallarProducto(): String {
+    open fun detallarProducto(): String {
         val precioFormateado = String.format(Locale.US, "%.2f", precio)
-        return "$nombre - $$precioFormateado | Ingredientes: ${ingredientes.joinToString(", ")}"
+        val esPromo = esProductoPromocionable(this)
+        val etiquetaPromo = if (esPromo) " ⭐ [PROMOCIONABLE]" else ""
+        return "[$categoria] $nombre - $$precioFormateado$etiquetaPromo | Ingredientes: ${ingredientes.joinToString(", ")}"
     }
+}
+
+/**
+ * PASO 2 (Anotaciones):
+ * Subclase ComboFamiliar anotada con @Promocionable (10% de descuento adicional).
+ */
+@Promocionable(
+    descripcion = "Combo Familiar Duoc UC: 2 pizzas + bebida con 10% de descuento adicional",
+    descuentoAdicional = 0.10
+)
+open class ComboFamiliar(
+    nombre: String = "Combo Familiar Duoc UC",
+    precio: Double = 16990.0,
+    ingredientes: List<String> = listOf("Masa", "Salsa de Tomate", "Queso Mozzarella", "Pepperoni", "Bebida Cola")
+) : Producto(nombre, precio, ingredientes, "Combo")
+
+/**
+ * PASO 2 (Anotaciones):
+ * Subclase PizzaPromocional anotada con @Promocionable (5% de descuento adicional).
+ */
+@Promocionable(
+    descripcion = "Pizza Promo Suprema de temporada con 5% de descuento adicional",
+    descuentoAdicional = 0.05
+)
+open class PizzaPromocional(
+    nombre: String = "Pizza Promo Suprema",
+    precio: Double = 10500.0,
+    ingredientes: List<String> = listOf("Masa", "Salsa de Tomate", "Queso Mozzarella", "Pepperoni", "Champiñones")
+) : Producto(nombre, precio, ingredientes, "Pizza")
+
+/**
+ * PASO 2 (Reflection):
+ * Verifica dinámicamente en tiempo de ejecución si un producto o su clase está anotado con @Promocionable.
+ */
+fun esProductoPromocionable(producto: Producto): Boolean {
+    return producto::class.java.isAnnotationPresent(Promocionable::class.java)
+}
+
+/**
+ * PASO 2 (Reflection):
+ * Recupera dinámicamente la instancia de la anotación @Promocionable para acceder a sus atributos.
+ */
+fun obtenerAnotacionPromocionable(producto: Producto): Promocionable? {
+    return producto::class.java.getAnnotation(Promocionable::class.java)
+}
+
+/**
+ * PASO 2 (Reflection):
+ * Analiza e inspecciona dinámicamente mediante Reflection cualquier clase del dominio
+ * (Cliente, Pedido, Producto, etc.), listando sus propiedades/atributos y métodos declarados.
+ * Cumple con el requerimiento de análisis dinámico de entidades clave.
+ */
+fun inspeccionarEntidadConReflection(clase: Class<*>) {
+    println("\n============================================================")
+    println("🔬 [REFLECTION] INSPECCIÓN DINÁMICA DE LA CLASE: ${clase.simpleName}")
+    println("============================================================")
+
+    // 1. Verificación de anotaciones presentes a nivel de clase
+    val anotaciones = clase.annotations
+    println("🏷️  Anotaciones presentes (${anotaciones.size}):")
+    if (anotaciones.isEmpty()) {
+        println("   (Sin anotaciones directas en la clase)")
+    } else {
+        anotaciones.forEach { anot ->
+            println("   * @${anot.annotationClass.simpleName} -> $anot")
+        }
+    }
+
+    // 2. Propiedades / Campos declarados
+    val campos = clase.declaredFields
+    println("\n📋 Atributos / Propiedades declaradas (${campos.size}):")
+    campos.forEach { campo ->
+        campo.isAccessible = true
+        println("   - ${campo.name}: ${campo.type.simpleName}")
+    }
+
+    // 3. Métodos declarados
+    val metodos = clase.declaredMethods
+    println("\n⚙️  Métodos y funciones declaradas (${metodos.size}):")
+    metodos.forEach { metodo ->
+        val params = metodo.parameterTypes.joinToString(", ") { it.simpleName }
+        println("   - ${metodo.name}($params): ${metodo.returnType.simpleName}")
+    }
+    println("============================================================")
 }
 
 // ============================================================================
@@ -120,6 +228,8 @@ class Pedido(
         private set
     var descuentoVolumen: Double = 0.0
         private set
+    var descuentoAnotacionPromo: Double = 0.0
+        private set
     var descuento: Double = 0.0
         private set
     var impuestos: Double = 0.0
@@ -133,10 +243,10 @@ class Pedido(
     }
 
     /**
-     * PASO 1 (Ranges) & PASO 2 (Funciones):
-     * Verifica si la fecha del pedido se encuentra dentro del rango de promociones (fecha in PERIODO_PROMOCION).
-     * De ser así, aplica un 15% de descuento al total. Además, si se ordenan más de 3 pizzas,
-     * suma un 10% de descuento adicional por volumen.
+     * PASO 1 (Ranges) & PASO 2 (Anotaciones & Reflection):
+     * - Verifica si la fecha del pedido se encuentra dentro del rango de promociones (15% descuento).
+     * - Identifica dinámicamente mediante Reflection productos anotados con @Promocionable y aplica su descuento extra.
+     * - Aplica un 10% adicional si el cliente ordena más de 3 pizzas.
      */
     fun calcularTotal() {
         subtotal = productos.sumOf { it.precio }
@@ -145,10 +255,18 @@ class Pedido(
         val enRangoPromo = fecha in PERIODO_PROMOCION
         descuentoPromoFechas = if (enRangoPromo) subtotal * 0.15 else 0.0
 
+        // PASO 2 (Anotaciones & Reflection): Identificación dinámica de productos con @Promocionable
+        val prodsPromo = productos.filter { esProductoPromocionable(it) }
+        descuentoAnotacionPromo = prodsPromo.sumOf { prod ->
+            val meta = obtenerAnotacionPromocionable(prod)
+            val porcentaje = meta?.descuentoAdicional ?: 0.05
+            prod.precio * porcentaje
+        }
+
         // Descuento por volumen (más de 3 productos)
         descuentoVolumen = if (productos.size > 3) subtotal * 0.10 else 0.0
 
-        descuento = descuentoPromoFechas + descuentoVolumen
+        descuento = descuentoPromoFechas + descuentoVolumen + descuentoAnotacionPromo
         val baseImponible = (subtotal - descuento).coerceAtLeast(0.0)
 
         // Impuesto (IVA estándar 19%)
@@ -189,12 +307,27 @@ class Pedido(
         val repartidorInfo = repartidor?.let { "${it.nombre} (${it.distanciaKm} km de distancia)" }
             ?: "Pendiente de asignación"
 
-        val descPromoTexto = if (descuentoPromoFechas > 0.0) {
+        val descPromoFechasTexto = if (descuentoPromoFechas > 0.0) {
             "\n   - Descuento Rango Fechas (15%): -$${String.format(Locale.US, "%.2f", descuentoPromoFechas)} [Promoción activa: ${FECHA_INICIO_PROMO.format(FORMATO_FECHA)} al ${FECHA_FIN_PROMO.format(FORMATO_FECHA)}]"
+        } else ""
+
+        val descAnotacionTexto = if (descuentoAnotacionPromo > 0.0) {
+            "\n   - Descuento @Promocionable:      -$${String.format(Locale.US, "%.2f", descuentoAnotacionPromo)} (Identificado dinámicamente con Reflection)"
         } else ""
 
         val descVolumenTexto = if (descuentoVolumen > 0.0) {
             "\n   - Descuento por Volumen (10%):  -$${String.format(Locale.US, "%.2f", descuentoVolumen)} (>3 unidades)"
+        } else ""
+
+        val prodsPromo = productos.filter { esProductoPromocionable(it) }.distinctBy { it.nombre }
+        val seccionPromos = if (prodsPromo.isNotEmpty()) {
+            "\n------------------------------------------------------------\n" +
+            "⭐ PRODUCTOS PROMOCIONABLES DETECTADOS (@Promocionable):\n" +
+            prodsPromo.joinToString("\n") { prod ->
+                val meta = obtenerAnotacionPromocionable(prod)
+                val extraPct = (meta?.descuentoAdicional ?: 0.05) * 100
+                "   * ${prod.nombre} -> Descuento especial: ${String.format(Locale.US, "%.1f", extraPct)}% [${meta?.descripcion ?: ""}]"
+            }
         } else ""
 
         return """
@@ -208,14 +341,14 @@ class Pedido(
            - Dirección: ${cliente.direccion}
         ------------------------------------------------------------
         🍕 PRODUCTOS EN EL PEDIDO (${productos.size} unidades):
-        ${detalleItems.replace("\n", "\n        ")}
+        ${detalleItems.replace("\n", "\n        ")}$seccionPromos
         ------------------------------------------------------------
         📝 NOTAS DEL PEDIDO:    $notasFormateadas
         🛵 REPARTIDOR ASIGNADO: $repartidorInfo
         📦 ESTADO DEL PEDIDO:   $estado
         ------------------------------------------------------------
         💵 DESGLOSE ECONÓMICO:
-           - Subtotal:                     $${String.format(Locale.US, "%.2f", subtotal)}$descPromoTexto$descVolumenTexto
+           - Subtotal:                     $${String.format(Locale.US, "%.2f", subtotal)}$descPromoFechasTexto$descAnotacionTexto$descVolumenTexto
            - Total Descuentos:            -$${String.format(Locale.US, "%.2f", descuento)}
            - Impuestos (IVA 19%):          $${String.format(Locale.US, "%.2f", impuestos)}
            - TOTAL A PAGAR:                $${String.format(Locale.US, "%.2f", total)}
@@ -548,22 +681,25 @@ private fun ejecutarMenu() {
 
     // PASO 2: Colección Map para registrar el inventario inicial
     val inventario: MutableMap<String, Int> = mutableMapOf(
-        "Masa" to 15,
-        "Salsa de Tomate" to 20,
-        "Queso Mozzarella" to 15,
-        "Pepperoni" to 10,
-        "Jamón" to 8,
-        "Piña" to 5,
-        "Champiñones" to 6,
-        "Albahaca" to 8
+        "Masa" to 20,
+        "Salsa de Tomate" to 25,
+        "Queso Mozzarella" to 20,
+        "Pepperoni" to 15,
+        "Jamón" to 10,
+        "Piña" to 8,
+        "Champiñones" to 10,
+        "Albahaca" to 10,
+        "Bebida Cola" to 15
     )
 
-    // Catálogo de Productos disponibles
+    // Catálogo de Productos disponibles (incluye pizzas clásicas y productos anotados con @Promocionable)
     val catalogo: List<Producto> = listOf(
-        Producto("Pizza Margarita", 8500.0, listOf("Masa", "Salsa de Tomate", "Queso Mozzarella", "Albahaca")),
-        Producto("Pizza Pepperoni", 9900.0, listOf("Masa", "Salsa de Tomate", "Queso Mozzarella", "Pepperoni")),
-        Producto("Pizza Hawaiana", 9500.0, listOf("Masa", "Salsa de Tomate", "Queso Mozzarella", "Jamón", "Piña")),
-        Producto("Pizza Champiñón", 9200.0, listOf("Masa", "Salsa de Tomate", "Queso Mozzarella", "Champiñones"))
+        Producto("Pizza Margarita", 8500.0, listOf("Masa", "Salsa de Tomate", "Queso Mozzarella", "Albahaca"), "Pizza"),
+        Producto("Pizza Pepperoni", 9900.0, listOf("Masa", "Salsa de Tomate", "Queso Mozzarella", "Pepperoni"), "Pizza"),
+        Producto("Pizza Hawaiana", 9500.0, listOf("Masa", "Salsa de Tomate", "Queso Mozzarella", "Jamón", "Piña"), "Pizza"),
+        Producto("Pizza Champiñón", 9200.0, listOf("Masa", "Salsa de Tomate", "Queso Mozzarella", "Champiñones"), "Pizza"),
+        PizzaPromocional("Pizza Promo Suprema", 10500.0, listOf("Masa", "Salsa de Tomate", "Queso Mozzarella", "Pepperoni", "Champiñones")),
+        ComboFamiliar("Combo Familiar Duoc UC", 16990.0, listOf("Masa", "Salsa de Tomate", "Queso Mozzarella", "Pepperoni", "Bebida Cola"))
     )
 
     // PASO 2: Colección listOf para los repartidores disponibles
@@ -584,12 +720,13 @@ private fun ejecutarMenu() {
             3. Ver catálogo
             4. Ver repartidores
             5. Reporte del día
-            6. Demostración
+            6. Demostración integral
             7. Avanzar estado de un pedido
             8. Reponer ingrediente
+            9. Inspeccionar clases con Reflection (Paso 2)
             0. Salir
         """.trimIndent())
-        when (leerEntero("Opción: ", 0, 8)) {
+        when (leerEntero("Opción: ", 0, 9)) {
             1 -> tomarPedido(catalogo, inventario)?.let { pedidos += it }
             2 -> inventario.forEach { (ingrediente, cantidad) ->
                 val estado = if (cantidad > 5) "Óptimo" else if (cantidad > 0) "Bajo" else "Agotado"
@@ -612,6 +749,28 @@ private fun ejecutarMenu() {
                 }
             }
             8 -> reponerIngrediente(inventario)
+            9 -> {
+                println("\n🔬 SELECCIONE LA CLASE A INSPECCIONAR MEDIANTE REFLECTION:")
+                println("1. Cliente")
+                println("2. Producto")
+                println("3. Pedido")
+                println("4. ComboFamiliar (@Promocionable)")
+                println("5. PizzaPromocional (@Promocionable)")
+                println("6. Inspección completa de todas las entidades")
+                when (leerEntero("Opción: ", 1, 6)) {
+                    1 -> inspeccionarEntidadConReflection(Cliente::class.java)
+                    2 -> inspeccionarEntidadConReflection(Producto::class.java)
+                    3 -> inspeccionarEntidadConReflection(Pedido::class.java)
+                    4 -> inspeccionarEntidadConReflection(ComboFamiliar::class.java)
+                    5 -> inspeccionarEntidadConReflection(PizzaPromocional::class.java)
+                    6 -> {
+                        inspeccionarEntidadConReflection(Cliente::class.java)
+                        inspeccionarEntidadConReflection(Producto::class.java)
+                        inspeccionarEntidadConReflection(Pedido::class.java)
+                        inspeccionarEntidadConReflection(ComboFamiliar::class.java)
+                    }
+                }
+            }
             0 -> return
         }
     }
