@@ -1,40 +1,38 @@
 # PMY2201_Exp1_S3_Carolina_Delgado
 
-**Asignatura:** Desarrollo de Aplicaciones Móviles I (PMY2201)  
-**Evaluación:** Sumativa Individual - Semana 3 (Experiencia 1): *"Creando soluciones con Kotlin"*  
-**Alumna:** Carolina Delgado  
-**Institución:** Duoc UC  
+**Proyecto:** Sistema de Gestión de Pizzería en Kotlin  
+**Autora:** Carolina Delgado  
 
 ---
 
 ## 📌 Descripción del Proyecto
 
-Sistema de gestión para una pizzería desarrollado en **Kotlin**, correspondiente a la evolución y refactorización avanzada del proyecto base de la Semana 2. 
+Sistema integral para la gestión comercial y operativa de una pizzería, implementado con características avanzadas de Kotlin:
 
-El proyecto incorpora utilidades avanzadas de Kotlin:
-- **Regex y Ranges (Paso 1):**
-  - Validación interactiva de correo electrónico (`nombre@dominio.com`) con solicitud de reingreso ante error.
-  - Formateo uniforme de números telefónicos internacionales (`+XX (XXX) XXX-XXXX`) mediante expresiones regulares y grupos de captura.
-  - Rango de fechas promocionales (`ClosedRange<LocalDate>`) con aplicación de descuentos automáticos al total.
-  - Validación de cantidades permitidas (`1..100`) para pedidos e insumos.
-- **Anotaciones y Reflection (Paso 2):**
-  - Anotación personalizada `@Promocionable` para catalogar productos especiales.
-  - Inspección dinámica mediante Reflection (`KClass`, propiedades y miembros).
-- **Sobrecarga de Operadores (Paso 3):**
-  - Operador `+` en `Pedido` para combinar pedidos y recalcular totales.
-  - Operador `==` en `Producto` comparando por nombre y categoría.
-- **Declaraciones de Desestructuración (Paso 4):**
-  - Desestructuración de objetos `Cliente` y `Pedido`.
-- **Evaluaciones de Igualdad (Paso 5):**
-  - Implementación de `equals()` y `hashCode()` para prevenir duplicados en colecciones.
-- **Resumen y Demostración en Consola (Paso 6):**
-  - Ejecución integral y modular demostrando todas las capacidades operando en conjunto.
+- **Expresiones Regulares (Regex) y Rangos (Ranges):**
+  - Validación de correo electrónico (`nombre@dominio.com`) con solicitud de reingreso ante formato incorrecto.
+  - Normalización y formateo uniforme de teléfonos internacionales (`+XX (XXX) XXX-XXXX`) mediante Regex y grupos de captura desestructurados.
+  - Gestión de promociones por temporada mediante rangos de fechas cerrados (`ClosedRange<LocalDate>`), aplicando descuentos automáticos.
+  - Validación de rangos numéricos permitidos (`1..100`) para pedidos e insumos.
+- **Metaprogramación mediante Anotaciones y Reflection:**
+  - Anotación personalizada `@Promocionable` con retención en tiempo de ejecución (`RUNTIME`) para identificar productos y combos con descuentos especiales.
+  - Identificación dinámica de promociones en tiempo de ejecución mediante funciones de extensión y Reflection.
+  - Módulo inspector que examina dinámicamente propiedades, métodos y anotaciones de cualquier entidad.
+- **Sobrecarga de Operadores (Operator Overloading):**
+  - Sobrecarga del operador `+` (`operator fun plus`) en `Pedido` para combinar dos pedidos fusionando ítems y recalculando totales y descuentos.
+  - Sobrecarga del operador `==` (`equals`) en `Producto` para comparar ítems basándose en nombre y categoría.
+- **Declaraciones de Desestructuración:**
+  - Desestructuración posicional de `Cliente`: `val (nombre, correo, telefono) = cliente`.
+  - Desestructuración posicional de `Pedido`: `val (cliente, productos, total) = pedido`.
+- **Evaluación de Igualdad y Control de Duplicados:**
+  - Implementación coherente de `equals()` y `hashCode()` en `Cliente` y `Producto`.
+  - Prevención activa de registros duplicados en colecciones de tipo `Set` / `HashSet`.
 
 ---
 
 ## 🚀 Compilación y Ejecución
 
-Compilación mediante el compilador oficial de Kotlin (`kotlinc`):
+Compilación mediante el compilador de Kotlin (`kotlinc`):
 
 ```bash
 kotlinc Main.kt -include-runtime -d App.jar

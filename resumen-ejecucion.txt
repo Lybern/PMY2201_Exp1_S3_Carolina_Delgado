@@ -1,179 +1,338 @@
-🍕 =========================================================
-🍕 SISTEMA INTEGRAL DE GESTIÓN - PIZZERÍA KOTLIN (SEMANA 2)
-🍕 =========================================================
-Categorías habilitadas en sistema: Clásicas | Especiales | Gourmet | Vegetarianas
+================================================================================
+EVIDENCIA DE EJECUCIÓN - SISTEMA INTEGRAL DE GESTIÓN DE PIZZERÍA KOTLIN
+================================================================================
+Fecha de generación: 09/11/2026
+Entorno: Kotlin JVM Runtime
 
-MENÚ PRINCIPAL
+RESUMEN DE CARACTERÍSTICAS VERIFICADAS:
+1. Regex y Ranges: Validación de formato de correo, normalización de teléfono +XX (XXX) XXX-XXXX, rango de fechas promocionales y cantidades 1..100.
+2. Metaprogramación: Anotación @Promocionable e inspección dinámica de clases con Reflection.
+3. Sobrecarga de Operadores: Fusión de pedidos con '+' y comparación con '=='.
+4. Desestructuración: Extracción posicional de Cliente y Pedido.
+5. Evaluación de Igualdad: Implementación de equals() y hashCode() con prevención de duplicados en Set.
+================================================================================
+
+? =========================================================
+? SISTEMA INTEGRAL DE GESTI�N DE PIZZER�A KOTLIN
+? =========================================================
+Categor�as habilitadas en sistema: Cl�sicas | Especiales | Gourmet | Vegetarianas | Combos
+
+MEN� PRINCIPAL
 1. Registrar pedido
 2. Consultar inventario
-3. Ver catálogo
+3. Ver cat�logo
 4. Ver repartidores
-5. Reporte del día
-6. Demostración
+5. Reporte del d�a
+6. Demostraci�n integral
 7. Avanzar estado de un pedido
 8. Reponer ingrediente
+9. Inspeccionar clases con Reflection
+10. Probar sobrecarga de operadores (+ y ==)
+11. Probar desestructuraci�n de objetos (Cliente y Pedido)
+12. Probar igualdad y prevenci�n de duplicados
 0. Salir
-Opción: 
-DEMOSTRACIÓN CON DATOS DE EJEMPLO
-✅ [Inventario]: Todos los ingredientes requeridos están disponibles.
-📦 [Inventario Actualizado]: Stock descontado automáticamente en el sistema.
-Confirmación simulada para valentina@example.com | Pedido #542d3f49
+Opci�n: 
 ============================================================
-🧾 RESUMEN DEL PEDIDO #542d3f49
+? INICIO DE DEMOSTRACI�N INTEGRAL
 ============================================================
-👤 DATOS DEL CLIENTE:
-   - Nombre:    Valentina Flores
-   - Teléfono:  +56912345678
-   - Correo:    valentina@example.com
-   - Dirección: Av. Providencia 1234
+
+--- REGISTRO DE PEDIDO CON PRODUCTOS PROMOCIONABLES ---
+? [Inventario]: Todos los ingredientes requeridos est�n disponibles.
+? [Inventario Actualizado]: Stock descontado autom�ticamente en el sistema.
+Confirmaci�n simulada para valentina@mail.com | Pedido #7431efa8
+? [Desestructuraci�n]: Pedido #7431efa8 registrado para Valentina Flores (Tel: +56 (991) 234-5678, Email: valentina@mail.com)
+   -> Total productos: 4 unidades | Monto: $$36674.61
+        ============================================================
+        ? RESUMEN DEL PEDIDO #7431efa8 | Fecha: 09/11/2026
+        ============================================================
+        ? DATOS DEL CLIENTE:
+           - Nombre:    Valentina Flores
+           - Tel�fono:  +56 (991) 234-5678
+           - Correo:    valentina@mail.com
+           - Direcci�n: Av. Providencia 1234
+        ------------------------------------------------------------
+        ? PRODUCTOS EN EL PEDIDO (4 unidades):
+              - Pizza Margarita x1 (Unitario: $8500.00) = $8500.00
+              - Pizza Pepperoni x1 (Unitario: $9900.00) = $9900.00
+              - Pizza Promo Suprema x1 (Unitario: $10500.00) = $10500.00
+              - Combo Familiar Gourmet x1 (Unitario: $16990.00) = $16990.00
 ------------------------------------------------------------
-🍕 PRODUCTOS EN EL PEDIDO (4 unidades):
-      - Pizza Margarita x1 (Unitario: $8500.00) = $8500.00
-      - Pizza Pepperoni x2 (Unitario: $9900.00) = $19800.00
-      - Pizza Hawaiana x1 (Unitario: $9500.00) = $9500.00
+? PRODUCTOS PROMOCIONABLES DETECTADOS (@Promocionable):
+   * Pizza Promo Suprema -> Descuento especial: 10% [Promo Suprema Temporada]
+   * Combo Familiar Gourmet -> Descuento especial: 15% [Combo Familiar Gourmet]
+        ------------------------------------------------------------
+        ? NOTAS DEL PEDIDO:    Sin notas especiales
+        ? REPARTIDOR ASIGNADO: Pendiente de asignaci�n
+        ? ESTADO DEL PEDIDO:   En preparaci�n
+        ------------------------------------------------------------
+        ? DESGLOSE ECON�MICO:
+           - Subtotal:                     $45890.00
+   - Descuento Rango Fechas (15%): -$6883.50 [Promoci�n activa: 06/11/2026 al 19/11/2026]
+   - Descuento @Promocionable:      -$3598.50 (Identificado din�micamente con Reflection)
+   - Descuento por Volumen (10%):  -$4589.00 (>3 unidades)
+           - Total Descuentos:            -$15071.00
+           - Impuestos (IVA 19%):          $5855.61
+           - TOTAL A PAGAR:                $36674.61
+        ============================================================
+        ============================================================
+        ? RESUMEN DEL PEDIDO #7431efa8 | Fecha: 09/11/2026
+        ============================================================
+        ? DATOS DEL CLIENTE:
+           - Nombre:    Valentina Flores
+           - Tel�fono:  +56 (991) 234-5678
+           - Correo:    valentina@mail.com
+           - Direcci�n: Av. Providencia 1234
+        ------------------------------------------------------------
+        ? PRODUCTOS EN EL PEDIDO (4 unidades):
+              - Pizza Margarita x1 (Unitario: $8500.00) = $8500.00
+              - Pizza Pepperoni x1 (Unitario: $9900.00) = $9900.00
+              - Pizza Promo Suprema x1 (Unitario: $10500.00) = $10500.00
+              - Combo Familiar Gourmet x1 (Unitario: $16990.00) = $16990.00
 ------------------------------------------------------------
-📝 NOTAS DEL PEDIDO:    Sin notas especiales
-🛵 REPARTIDOR ASIGNADO: Pendiente de asignación
-📦 ESTADO DEL PEDIDO:   En preparación
-------------------------------------------------------------
-💵 DESGLOSE ECONÓMICO:
-   - Subtotal:            $37800.00
-   - Descuento aplicado: -$3780.00 (10% por ordenar más de 3 pizzas)
-   - Impuestos (IVA 19%): $6463.80
-   - TOTAL A PAGAR:       $40483.80
-============================================================
-============================================================
-🧾 RESUMEN DEL PEDIDO #542d3f49
-============================================================
-👤 DATOS DEL CLIENTE:
-   - Nombre:    Valentina Flores
-   - Teléfono:  +56912345678
-   - Correo:    valentina@example.com
-   - Dirección: Av. Providencia 1234
-------------------------------------------------------------
-🍕 PRODUCTOS EN EL PEDIDO (4 unidades):
-      - Pizza Margarita x1 (Unitario: $8500.00) = $8500.00
-      - Pizza Pepperoni x2 (Unitario: $9900.00) = $19800.00
-      - Pizza Hawaiana x1 (Unitario: $9500.00) = $9500.00
-------------------------------------------------------------
-📝 NOTAS DEL PEDIDO:    Sin notas especiales
-🛵 REPARTIDOR ASIGNADO: Pendiente de asignación
-📦 ESTADO DEL PEDIDO:   Listo
-------------------------------------------------------------
-💵 DESGLOSE ECONÓMICO:
-   - Subtotal:            $37800.00
-   - Descuento aplicado: -$3780.00 (10% por ordenar más de 3 pizzas)
-   - Impuestos (IVA 19%): $6463.80
-   - TOTAL A PAGAR:       $40483.80
-============================================================
+? PRODUCTOS PROMOCIONABLES DETECTADOS (@Promocionable):
+   * Pizza Promo Suprema -> Descuento especial: 10% [Promo Suprema Temporada]
+   * Combo Familiar Gourmet -> Descuento especial: 15% [Combo Familiar Gourmet]
+        ------------------------------------------------------------
+        ? NOTAS DEL PEDIDO:    Sin notas especiales
+        ? REPARTIDOR ASIGNADO: Pendiente de asignaci�n
+        ? ESTADO DEL PEDIDO:   Listo
+        ------------------------------------------------------------
+        ? DESGLOSE ECON�MICO:
+           - Subtotal:                     $45890.00
+   - Descuento Rango Fechas (15%): -$6883.50 [Promoci�n activa: 06/11/2026 al 19/11/2026]
+   - Descuento @Promocionable:      -$3598.50 (Identificado din�micamente con Reflection)
+   - Descuento por Volumen (10%):  -$4589.00 (>3 unidades)
+           - Total Descuentos:            -$15071.00
+           - Impuestos (IVA 19%):          $5855.61
+           - TOTAL A PAGAR:                $36674.61
+        ============================================================
 Repartidor asignado | Carlos Silva
-============================================================
-🧾 RESUMEN DEL PEDIDO #542d3f49
-============================================================
-👤 DATOS DEL CLIENTE:
-   - Nombre:    Valentina Flores
-   - Teléfono:  +56912345678
-   - Correo:    valentina@example.com
-   - Dirección: Av. Providencia 1234
+        ============================================================
+        ? RESUMEN DEL PEDIDO #7431efa8 | Fecha: 09/11/2026
+        ============================================================
+        ? DATOS DEL CLIENTE:
+           - Nombre:    Valentina Flores
+           - Tel�fono:  +56 (991) 234-5678
+           - Correo:    valentina@mail.com
+           - Direcci�n: Av. Providencia 1234
+        ------------------------------------------------------------
+        ? PRODUCTOS EN EL PEDIDO (4 unidades):
+              - Pizza Margarita x1 (Unitario: $8500.00) = $8500.00
+              - Pizza Pepperoni x1 (Unitario: $9900.00) = $9900.00
+              - Pizza Promo Suprema x1 (Unitario: $10500.00) = $10500.00
+              - Combo Familiar Gourmet x1 (Unitario: $16990.00) = $16990.00
 ------------------------------------------------------------
-🍕 PRODUCTOS EN EL PEDIDO (4 unidades):
-      - Pizza Margarita x1 (Unitario: $8500.00) = $8500.00
-      - Pizza Pepperoni x2 (Unitario: $9900.00) = $19800.00
-      - Pizza Hawaiana x1 (Unitario: $9500.00) = $9500.00
+? PRODUCTOS PROMOCIONABLES DETECTADOS (@Promocionable):
+   * Pizza Promo Suprema -> Descuento especial: 10% [Promo Suprema Temporada]
+   * Combo Familiar Gourmet -> Descuento especial: 15% [Combo Familiar Gourmet]
+        ------------------------------------------------------------
+        ? NOTAS DEL PEDIDO:    Sin notas especiales
+        ? REPARTIDOR ASIGNADO: Carlos Silva (1.2 km de distancia)
+        ? ESTADO DEL PEDIDO:   En camino
+        ------------------------------------------------------------
+        ? DESGLOSE ECON�MICO:
+           - Subtotal:                     $45890.00
+   - Descuento Rango Fechas (15%): -$6883.50 [Promoci�n activa: 06/11/2026 al 19/11/2026]
+   - Descuento @Promocionable:      -$3598.50 (Identificado din�micamente con Reflection)
+   - Descuento por Volumen (10%):  -$4589.00 (>3 unidades)
+           - Total Descuentos:            -$15071.00
+           - Impuestos (IVA 19%):          $5855.61
+           - TOTAL A PAGAR:                $36674.61
+        ============================================================
+? [Repartidor Carlos Silva]: Ha entregado con �xito el pedido #7431efa8 en Av. Providencia 1234.
+        ============================================================
+        ? RESUMEN DEL PEDIDO #7431efa8 | Fecha: 09/11/2026
+        ============================================================
+        ? DATOS DEL CLIENTE:
+           - Nombre:    Valentina Flores
+           - Tel�fono:  +56 (991) 234-5678
+           - Correo:    valentina@mail.com
+           - Direcci�n: Av. Providencia 1234
+        ------------------------------------------------------------
+        ? PRODUCTOS EN EL PEDIDO (4 unidades):
+              - Pizza Margarita x1 (Unitario: $8500.00) = $8500.00
+              - Pizza Pepperoni x1 (Unitario: $9900.00) = $9900.00
+              - Pizza Promo Suprema x1 (Unitario: $10500.00) = $10500.00
+              - Combo Familiar Gourmet x1 (Unitario: $16990.00) = $16990.00
 ------------------------------------------------------------
-📝 NOTAS DEL PEDIDO:    Sin notas especiales
-🛵 REPARTIDOR ASIGNADO: Carlos Silva (1.2 km de distancia)
-📦 ESTADO DEL PEDIDO:   En camino
-------------------------------------------------------------
-💵 DESGLOSE ECONÓMICO:
-   - Subtotal:            $37800.00
-   - Descuento aplicado: -$3780.00 (10% por ordenar más de 3 pizzas)
-   - Impuestos (IVA 19%): $6463.80
-   - TOTAL A PAGAR:       $40483.80
-============================================================
-🚴 [Repartidor Carlos Silva]: Ha entregado con éxito el pedido #542d3f49 en Av. Providencia 1234.
-============================================================
-🧾 RESUMEN DEL PEDIDO #542d3f49
-============================================================
-👤 DATOS DEL CLIENTE:
-   - Nombre:    Valentina Flores
-   - Teléfono:  +56912345678
-   - Correo:    valentina@example.com
-   - Dirección: Av. Providencia 1234
-------------------------------------------------------------
-🍕 PRODUCTOS EN EL PEDIDO (4 unidades):
-      - Pizza Margarita x1 (Unitario: $8500.00) = $8500.00
-      - Pizza Pepperoni x2 (Unitario: $9900.00) = $19800.00
-      - Pizza Hawaiana x1 (Unitario: $9500.00) = $9500.00
-------------------------------------------------------------
-📝 NOTAS DEL PEDIDO:    Sin notas especiales
-🛵 REPARTIDOR ASIGNADO: Carlos Silva (1.2 km de distancia)
-📦 ESTADO DEL PEDIDO:   Entregado
-------------------------------------------------------------
-💵 DESGLOSE ECONÓMICO:
-   - Subtotal:            $37800.00
-   - Descuento aplicado: -$3780.00 (10% por ordenar más de 3 pizzas)
-   - Impuestos (IVA 19%): $6463.80
-   - TOTAL A PAGAR:       $40483.80
-============================================================
-⚠️ [Validación]: Formato telefónico no reconocido ('123'). Asignando valor por defecto: '(000) 000-0000'.
-⚠️ [Validación]: Correo inválido ('correo'). Asignando valor por defecto: 'correo@invalido.com'.
-✅ [Inventario]: Todos los ingredientes requeridos están disponibles.
-📦 [Inventario Actualizado]: Stock descontado automáticamente en el sistema.
-============================================================
-🧾 RESUMEN DEL PEDIDO #658e27af
-============================================================
-👤 DATOS DEL CLIENTE:
-   - Nombre:    Gonzalo Pérez
-   - Teléfono:  (000) 000-0000
-   - Correo:    correo@invalido.com
-   - Dirección: Calle Los Aromos 45
-------------------------------------------------------------
-🍕 PRODUCTOS EN EL PEDIDO (1 unidades):
-      - Pizza Margarita x1 (Unitario: $8500.00) = $8500.00
-------------------------------------------------------------
-📝 NOTAS DEL PEDIDO:    Tocar el timbre
-🛵 REPARTIDOR ASIGNADO: Pendiente de asignación
-📦 ESTADO DEL PEDIDO:   En preparación
-------------------------------------------------------------
-💵 DESGLOSE ECONÓMICO:
-   - Subtotal:            $8500.00
-   - Descuento aplicado: -$0.00
-   - Impuestos (IVA 19%): $1615.00
-   - TOTAL A PAGAR:       $10115.00
-============================================================
-❌ [Inventario Crítico]: Ninguno de los ingredientes necesarios se encuentra en stock.
-📌 PROTOCOLO DE REABASTECIMIENTO DE LA PIZZERÍA:
-   1. Generar orden de compra de emergencia para: Masa, Salsa de Tomate, Queso Mozzarella, Pepperoni.
-   2. Contactar a los distribuidores autorizados de la zona.
-   3. Registrar la reposición con la opción 8 del menú.
-   4. Volver a ingresar el pedido rechazado.
+? PRODUCTOS PROMOCIONABLES DETECTADOS (@Promocionable):
+   * Pizza Promo Suprema -> Descuento especial: 10% [Promo Suprema Temporada]
+   * Combo Familiar Gourmet -> Descuento especial: 15% [Combo Familiar Gourmet]
+        ------------------------------------------------------------
+        ? NOTAS DEL PEDIDO:    Sin notas especiales
+        ? REPARTIDOR ASIGNADO: Carlos Silva (1.2 km de distancia)
+        ? ESTADO DEL PEDIDO:   Entregado
+        ------------------------------------------------------------
+        ? DESGLOSE ECON�MICO:
+           - Subtotal:                     $45890.00
+   - Descuento Rango Fechas (15%): -$6883.50 [Promoci�n activa: 06/11/2026 al 19/11/2026]
+   - Descuento @Promocionable:      -$3598.50 (Identificado din�micamente con Reflection)
+   - Descuento por Volumen (10%):  -$4589.00 (>3 unidades)
+           - Total Descuentos:            -$15071.00
+           - Impuestos (IVA 19%):          $5855.61
+           - TOTAL A PAGAR:                $36674.61
+        ============================================================
+? [Inventario]: Todos los ingredientes requeridos est�n disponibles.
+? [Inventario Actualizado]: Stock descontado autom�ticamente en el sistema.
+Confirmaci�n simulada para gonzalo@dominio.com | Pedido #a2cff321
+? [Desestructuraci�n]: Pedido #a2cff321 registrado para Gonzalo P�rez (Tel: +05 (691) 234-5678, Email: gonzalo@dominio.com)
+   -> Total productos: 1 unidades | Monto: $$8597.75
+     ============================================================
+     ? RESUMEN DEL PEDIDO #a2cff321 | Fecha: 09/11/2026
+     ============================================================
+     ? DATOS DEL CLIENTE:
+        - Nombre:    Gonzalo P�rez
+        - Tel�fono:  +05 (691) 234-5678
+        - Correo:    gonzalo@dominio.com
+        - Direcci�n: Calle Los Aromos 45
+     ------------------------------------------------------------
+     ? PRODUCTOS EN EL PEDIDO (1 unidades):
+           - Pizza Margarita x1 (Unitario: $8500.00) = $8500.00
+     ------------------------------------------------------------
+     ? NOTAS DEL PEDIDO:    Tocar el timbre
+     ? REPARTIDOR ASIGNADO: Pendiente de asignaci�n
+     ? ESTADO DEL PEDIDO:   En preparaci�n
+     ------------------------------------------------------------
+     ? DESGLOSE ECON�MICO:
+        - Subtotal:                     $8500.00
+- Descuento Rango Fechas (15%): -$1275.00 [Promoci�n activa: 06/11/2026 al 19/11/2026]
+        - Total Descuentos:            -$1275.00
+        - Impuestos (IVA 19%):          $1372.75
+        - TOTAL A PAGAR:                $8597.75
+     ============================================================
 
 ============================================================
-📊 REPORTE DE GESTIÓN DIARIA DE PEDIDOS (Ciclo FOR)
+? REPORTE DE GESTI�N DIARIA DE PEDIDOS
 ============================================================
-[#1] ID: 542d3f49 | Cliente: Valentina Flores | Pizzas: [Pizza Margarita, Pizza Pepperoni, Pizza Pepperoni, Pizza Hawaiana] | Total: $40483.80 | Estado: Entregado
-[#2] ID: 658e27af | Cliente: Gonzalo Pérez | Pizzas: [Pizza Margarita] | Total: $10115.00 | Estado: En preparación
+[#1] ID: 7431efa8 | Cliente: Valentina Flores | Productos: [Pizza Margarita, Pizza Pepperoni, Pizza Promo Suprema, Combo Familiar Gourmet] | Total: $36674.61 | Estado: Entregado
+[#2] ID: a2cff321 | Cliente: Gonzalo P�rez | Productos: [Pizza Margarita] | Total: $8597.75 | Estado: En preparaci�n
 
 ------------------------------------------------------------
-🔍 CLASIFICACIÓN DE PEDIDOS (Uso de .filter)
+? CLASIFICACI�N DE PEDIDOS (Uso de filter)
 ------------------------------------------------------------
-🟢 Pedidos Completados (1):
-   * Pedido #542d3f49 | Cliente: Valentina Flores | Estado: Entregado
+? Pedidos Completados (1):
+   * Pedido #7431efa8 | Cliente: Valentina Flores | Estado: Entregado
 
-🟡 Pedidos Pendientes de Entrega (1):
-   * Pedido #658e27af | Cliente: Gonzalo Pérez | Estado: En preparación
+? Pedidos Pendientes de Entrega (1):
+   * Pedido #a2cff321 | Cliente: Gonzalo P�rez | Estado: En preparaci�n
 ============================================================
 
 
-MENÚ PRINCIPAL
+============================================================
+? DEMOSTRACI�N DE SOBRECARGA DE OPERADORES (+ y ==)
+============================================================
+1??  SOBRECARGA DEL OPERADOR '==' EN PRODUCTO (por nombre y categor�a):
+   - Producto A: [Pizza] 'Pizza Pepperoni' ($9900.0)
+   - Producto B: [Pizza] 'pizza pepperoni' ($11500.0)
+   - Producto C: [Combo] 'Pizza Pepperoni' ($9900.0)
+   -> Evaluaci�n (prod1 == prod2) [mismo nombre y categor�a]: true (Resultado: true)
+   -> Evaluaci�n (prod1 == prod3) [distinta categor�a]:       false (Resultado: false)
+
+2??  SOBRECARGA DEL OPERADOR '+' EN PEDIDO (fusi�n de dos pedidos):
+   - Pedido 1 (#9edefaca): 2 productos | Subtotal: $$18400.00 | Total: $$18611.60
+   - Pedido 2 (#957752b1): 2 productos | Subtotal: $$27490.00 | Total: $$23523.92
+
+   ? RESULTADO TRAS: val pedidoCombinado = pedido1 + pedido2
+   - Nuevo ID Pedido:        #6fa1c74d
+   - Total �tems combinados: 4 unidades
+   - Notas combinadas:       'Mesa 1 | Extra servilletas'
+   - Subtotal combinado:     $$45890.00
+   - Descuentos aplicados:  -$15071.00
+   - TOTAL FINAL A PAGAR:    $$36674.61
+============================================================
+
+
+============================================================
+? DEMOSTRACI�N DE DESESTRUCTURACI�N DE OBJETOS
+============================================================
+1??  DESESTRUCTURACI�N DE OBJETO CLIENTE:
+   val (nombre, correo, telefono) = cliente
+   -> Variable 'nombre':   Valentina Flores
+   -> Variable 'correo':   valentina@mail.com
+   -> Variable 'telefono': +56 (991) 234-5678
+
+2??  DESESTRUCTURACI�N DE OBJETO PEDIDO:
+   val (cliente, productos, total) = pedido
+   -> Variable 'cliente':   Valentina Flores (valentina@mail.com)
+   -> Variable 'productos': 4 unidades [Pizza Margarita, Pizza Pepperoni, Pizza Promo Suprema, Combo Familiar Gourmet]
+   -> Variable 'total':     $$36674.61
+============================================================
+
+
+============================================================
+?? DEMOSTRACI�N DE IGUALDAD (equals/hashCode) Y DUPLICADOS
+============================================================
+1??  PREVENCI�N DE DUPLICADOS EN CLIENTES (Nombre + Correo):
+   - Cliente 1: 'Carolina Delgado' | Email: 'carolina.delgado@mail.com'
+   - Cliente 2: 'carolina delgado' | Email: 'CAROLINA.DELGADO@MAIL.COM'
+   -> �Son iguales seg�n equals()? (clienteOriginal == clienteDuplicado): true
+   -> HashCode Cliente 1: 747672354
+   -> HashCode Cliente 2: 747672354 (Mismo hash code)
+   -> Intento 1: Agregar Cliente 1 a Set -> �Aceptado?: true
+   -> Intento 2: Agregar Cliente 2 a Set -> �Aceptado?: false (Rechazado por duplicidad)
+   -> Clientes �nicos en el registro: 1 cliente(s)
+
+2??  PREVENCI�N DE DUPLICADOS EN PRODUCTOS (Nombre + Categor�a):
+   - Producto 1: [Pizza] 'Pizza Pepperoni' ($9900.0)
+   - Producto 2: [Pizza] 'pizza pepperoni' ($11500.0)
+   -> �Son iguales seg�n equals()? (prodOriginal == prodRepetido): true
+   -> HashCode Producto 1: 258447128
+   -> HashCode Producto 2: 258447128
+   -> Intentando registrar producto repetido en cat�logo Set (tama�o inicial: 6):
+   -> �Fue aceptado?: false (Rechazado: ya existe un producto con mismo nombre y categor�a)
+   -> Tama�o final del cat�logo: 6 productos
+============================================================
+
+
+--- INSPECCI�N DIN�MICA CON REFLECTION ---
+
+============================================================
+? [REFLECTION] INSPECCI�N DIN�MICA DE LA CLASE: ComboFamiliar
+============================================================
+??  Anotaciones presentes (2):
+   * @Promocionable -> @Promocionable(etiqueta="Combo Familiar Gourmet", descuento=15)
+   * @Metadata -> @kotlin.Metadata(xi=48, bv={1, 0, 3}, mv={2, 3, 0}, k=1, xs="", d1={"\u0000\u001e\n\u0002\u0018\u0002\n\u0002\u0018\u0002\n\u0000\n\u0002\u0010\u000e\n\u0000\n\u0002\u0010\u0006\n\u0000\n\u0002\u0010 \n\u0002\b\u0002\b\u0017\u0018\u00002\u00020\u0001B+\u0012\b\b\u0002\u0010\u0002\u001a\u00020\u0003\u0012\b\b\u0002\u0010\u0004\u001a\u00020\u0005\u0012\u000e\b\u0002\u0010\u0006\u001a\b\u0012\u0004\u0012\u00020\u00030\u0007\u00a2\u0006\u0004\b\b\u0010\t"}, pn="", d2={"LComboFamiliar;", "LProducto;", "nombre", "", "precio", "", "ingredientes", "", "<init>", "(Ljava/lang/String;DLjava/util/List;)V"})
+
+? Atributos / Propiedades declaradas (0):
+
+??  M�todos declarados (0):
+============================================================
+
+============================================================
+? [REFLECTION] INSPECCI�N DIN�MICA DE LA CLASE: Cliente
+============================================================
+??  Anotaciones presentes (1):
+   * @Metadata -> @kotlin.Metadata(xi=48, bv={1, 0, 3}, mv={2, 3, 0}, k=1, xs="", d1={"\u0000$\n\u0002\u0018\u0002\n\u0002\u0018\u0002\n\u0000\n\u0002\u0010\u000e\n\u0002\b\u000e\n\u0002\u0010\u000b\n\u0000\n\u0002\u0010\u0000\n\u0000\n\u0002\u0010\b\n\u0000\u0018\u00002\u00020\u0001B)\u0012\u0006\u0010\u0002\u001a\u00020\u0003\u0012\u0006\u0010\u0004\u001a\u00020\u0003\u0012\b\u0010\u0005\u001a\u0004\u0018\u00010\u0003\u0012\u0006\u0010\u0006\u001a\u00020\u0003\u00a2\u0006\u0004\b\u0007\u0010\bJ\u0006\u0010\f\u001a\u00020\u0003J\t\u0010\r\u001a\u00020\u0003H\u0086\u0002J\t\u0010\u000e\u001a\u00020\u0003H\u0086\u0002J\t\u0010\u000f\u001a\u00020\u0003H\u0086\u0002J\t\u0010\u0010\u001a\u00020\u0003H\u0086\u0002J\u0014\u0010\u0011\u001a\u00020\u00122\b\u0010\u0013\u001a\u0004\u0018\u00010\u0014H\u0096\u0082\u0004J\n\u0010\u0015\u001a\u00020\u0016H\u0096\u0080\u0004J\n\u0010\u0017\u001a\u00020\u0003H\u0096\u0080\u0004R\u0013\u0010\u0005\u001a\u0004\u0018\u00010\u0003\u00a2\u0006\b\n\u0000\u001a\u0004\b\t\u0010\nR\u0011\u0010\u0006\u001a\u00020\u0003\u00a2\u0006\b\n\u0000\u001a\u0004\b\u000b\u0010\n"}, pn="", d2={"LCliente;", "LUsuario;", "nombre", "", "contacto", "email", "direccion", "<init>", "(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)V", "getEmail", "()Ljava/lang/String;", "getDireccion", "obtenerFichaCliente", "component1", "component2", "component3", "component4", "equals", "", "other", "", "hashCode", "", "toString"})
+
+? Atributos / Propiedades declaradas (2):
+   - email: String
+   - direccion: String
+
+??  M�todos declarados (10):
+   - equals(Object): boolean
+   - toString(): String
+   - hashCode(): int
+   - component4(): String
+   - component2(): String
+   - getEmail(): String
+   - component3(): String
+   - component1(): String
+   - getDireccion(): String
+   - obtenerFichaCliente(): String
+============================================================
+
+MEN� PRINCIPAL
 1. Registrar pedido
 2. Consultar inventario
-3. Ver catálogo
+3. Ver cat�logo
 4. Ver repartidores
-5. Reporte del día
-6. Demostración
+5. Reporte del d�a
+6. Demostraci�n integral
 7. Avanzar estado de un pedido
 8. Reponer ingrediente
+9. Inspeccionar clases con Reflection
+10. Probar sobrecarga de operadores (+ y ==)
+11. Probar desestructuraci�n de objetos (Cliente y Pedido)
+12. Probar igualdad y prevenci�n de duplicados
 0. Salir
-Opción: 
+Opci�n: 
