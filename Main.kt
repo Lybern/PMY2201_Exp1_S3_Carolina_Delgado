@@ -798,6 +798,9 @@ private fun ejecutarMenu() {
         Repartidor("Andrea Castro", "+56944332211", distanciaKm = 3.1, disponible = true)
     )
 
+    // PASO 5: Colección MutableSet para control y prevención de clientes duplicados (equals y hashCode)
+    val clientesRegistrados: MutableSet<Cliente> = mutableSetOf()
+
     var pedidos = emptyArray<Pedido>()
     while (true) {
         println("""
@@ -814,10 +817,11 @@ private fun ejecutarMenu() {
             9. Inspeccionar clases con Reflection (Paso 2)
             10. Probar sobrecarga de operadores (+ y ==) (Paso 3)
             11. Probar desestructuración de objetos (Cliente y Pedido) (Paso 4)
+            12. Probar igualdad y prevención de duplicados (Paso 5)
             0. Salir
         """.trimIndent())
-        when (leerEntero("Opción: ", 0, 11)) {
-            1 -> tomarPedido(catalogo, inventario)?.let { pedidos += it }
+        when (leerEntero("Opción: ", 0, 12)) {
+            1 -> tomarPedido(catalogo, inventario, clientesRegistrados)?.let { pedidos += it }
             2 -> inventario.forEach { (ingrediente, cantidad) ->
                 val estado = if (cantidad > 5) "Óptimo" else if (cantidad > 0) "Bajo" else "Agotado"
                 println("$ingrediente | $cantidad unidades | $estado")
@@ -870,6 +874,7 @@ private fun ejecutarMenu() {
                 val demoPedido = Pedido(cliente = demoCliente, productos = listOf(catalogo[0], catalogo[4]), notas = "Demostración Desestructuración")
                 demostrarDesestructuracion(demoPedido)
             }
+            12 -> demostrarPrevencionDuplicados(catalogo)
             0 -> return
         }
     }
@@ -881,7 +886,11 @@ private fun mostrarCatalogo(catalogo: List<Producto>) {
     }
 }
 
-private fun tomarPedido(catalogo: List<Producto>, inventario: MutableMap<String, Int>): Pedido? {
+private fun tomarPedido(
+    catalogo: List<Producto>,
+    inventario: MutableMap<String, Int>,
+    clientesRegistrados: MutableSet<Cliente> = mutableSetOf()
+): Pedido? {
     val nombre = leerTextoObligatorio("Nombre del cliente: ")
     val direccion = leerTextoObligatorio("Dirección de entrega: ")
     // PASO 1 (Regex): Formateo de número telefónico uniforme (+XX (XXX) XXX-XXXX)
@@ -890,6 +899,14 @@ private fun tomarPedido(catalogo: List<Producto>, inventario: MutableMap<String,
     val correo = leerEmailObligatorio("Correo electrónico: ")
     print("Notas especiales (Enter para omitir): ")
     val notas = leer().ifBlank { null }
+
+    val cliente = Cliente(nombre, telefono, correo, direccion)
+    // PASO 5: Prevención de duplicados en colecciones Set mediante equals() y hashCode()
+    if (clientesRegistrados.add(cliente)) {
+        println("👤 [Registro Clientes]: Nuevo cliente registrado en el padrón de la pizzería.")
+    } else {
+        println("👤 [Registro Clientes]: Cliente habitual detectado vía equals()/hashCode(). No se duplica en el sistema.")
+    }
 
     mostrarCatalogo(catalogo)
     val productos = mutableListOf<Producto>()
@@ -904,7 +921,7 @@ private fun tomarPedido(catalogo: List<Producto>, inventario: MutableMap<String,
         println("Pedido cancelado. Agregue al menos una pizza.")
         return null
     }
-    return registrarPedido(Cliente(nombre, telefono, correo, direccion), productos, notas, inventario)
+    return registrarPedido(cliente, productos, notas, inventario)
 }
 
 private fun registrarPedido(
@@ -1039,6 +1056,54 @@ fun demostrarSobrecargaOperadores(catalogo: List<Producto>, cliente: Cliente) {
     println("============================================================\n")
 }
 
+/**
+ * PASO 5 (Evaluación de Igualdad de Objetos):
+ * Demuestra explícitamente en consola cómo la sobrescritura de equals() y hashCode()
+ * permite prevenir la duplicidad de Clientes y Productos al interactuar con colecciones (Set/HashSet).
+ */
+fun demostrarPrevencionDuplicados(catalogo: List<Producto>) {
+    println("\n============================================================")
+    println("🛡️ [PASO 5: EVALUACIÓN DE IGUALDAD] PREVENCIÓN DE DUPLICADOS")
+    println("============================================================")
+
+    println("1️⃣  PREVENCIÓN DE DUPLICADOS EN CLIENTES (Criterio: Nombre + Correo):")
+    val clienteOriginal = Cliente("Carolina Delgado", "+56 (991) 234-5678", "carolina.delgado@duocuc.cl", "Av. Principal 123")
+    val clienteDuplicado = Cliente("carolina delgado", "+56 (988) 776-5544", "CAROLINA.DELGADO@DUOCUC.CL", "Otra Dirección 456")
+
+    println("   - Cliente 1: '${clienteOriginal.nombre}' | Email: '${clienteOriginal.email}'")
+    println("   - Cliente 2: '${clienteDuplicado.nombre}' | Email: '${clienteDuplicado.email}'")
+    println("   -> ¿Son iguales según equals()? (clienteOriginal == clienteDuplicado): ${clienteOriginal == clienteDuplicado}")
+    println("   -> HashCode Cliente 1: ${clienteOriginal.hashCode()}")
+    println("   -> HashCode Cliente 2: ${clienteDuplicado.hashCode()} (Mismo hash code por coherencia)")
+
+    val registroClientes: MutableSet<Cliente> = mutableSetOf()
+    val agregado1 = registroClientes.add(clienteOriginal)
+    val agregado2 = registroClientes.add(clienteDuplicado)
+
+    println("   -> Intento 1: Agregar Cliente 1 a Set -> ¿Aceptado?: $agregado1")
+    println("   -> Intento 2: Agregar Cliente 2 a Set -> ¿Aceptado?: $agregado2 (RECHAZADO por duplicidad)")
+    println("   -> Clientes únicos en el registro: ${registroClientes.size} cliente(s)")
+
+    println("\n2️⃣  PREVENCIÓN DE DUPLICADOS EN PRODUCTOS (Criterio: Nombre + Categoría):")
+    val prodOriginal = Producto("Pizza Pepperoni", 9900.0, listOf("Masa", "Salsa", "Pepperoni"), "Pizza")
+    val prodRepetido = Producto("pizza pepperoni", 11500.0, listOf("Masa", "Tomate"), "Pizza") // Mismo nombre y categoría
+
+    println("   - Producto 1: [${prodOriginal.categoria}] '${prodOriginal.nombre}' ($${prodOriginal.precio})")
+    println("   - Producto 2: [${prodRepetido.categoria}] '${prodRepetido.nombre}' ($${prodRepetido.precio})")
+    println("   -> ¿Son iguales según equals()? (prodOriginal == prodRepetido): ${prodOriginal == prodRepetido}")
+    println("   -> HashCode Producto 1: ${prodOriginal.hashCode()}")
+    println("   -> HashCode Producto 2: ${prodRepetido.hashCode()}")
+
+    val catalogoSet: MutableSet<Producto> = catalogo.toMutableSet()
+    val tamanoInicial = catalogoSet.size
+    val prodAgregado = catalogoSet.add(prodRepetido)
+
+    println("   -> Intentando registrar producto repetido en catálogo Set (tamaño inicial: $tamanoInicial):")
+    println("   -> ¿Fue aceptado?: $prodAgregado (RECHAZADO: ya existe un producto con el mismo nombre y categoría)")
+    println("   -> Tamaño final del catálogo: ${catalogoSet.size} productos")
+    println("============================================================\n")
+}
+
 private fun demostrar(
     catalogo: List<Producto>,
     inventario: MutableMap<String, Int>,
@@ -1062,4 +1127,7 @@ private fun demostrar(
 
     // Demostración de desestructuración (Cliente y Pedido)
     pedidos.firstOrNull()?.let { demostrarDesestructuracion(it) }
+
+    // Demostración de prevención de duplicados (equals y hashCode)
+    demostrarPrevencionDuplicados(catalogo)
 }
