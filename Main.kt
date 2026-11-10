@@ -38,6 +38,33 @@ class Cliente(
 
     fun obtenerFichaCliente(): String =
         "Cliente: $nombre | Teléfono: $contacto | Email: ${email ?: "correo@invalido.com"} | Dirección: $direccion"
+
+    /**
+     * PASO 4 (Declaraciones de Desestructuración):
+     * Permite desestructurar directamente un objeto Cliente en sus componentes clave:
+     * val (nombre, correo, telefono) = cliente
+     */
+    operator fun component1(): String = nombre
+    operator fun component2(): String = email ?: "correo@invalido.com"
+    operator fun component3(): String = contacto
+    operator fun component4(): String = direccion
+
+    /**
+     * PASO 5 (Evaluación de Igualdad equals / hashCode):
+     * Dos clientes se consideran iguales si coinciden su nombre y su correo electrónico.
+     */
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other !is Cliente) return false
+        return this.nombre.equals(other.nombre, ignoreCase = true) &&
+               (this.email ?: "").equals(other.email ?: "", ignoreCase = true)
+    }
+
+    override fun hashCode(): Int {
+        var result = nombre.lowercase().hashCode()
+        result = 31 * result + (email?.lowercase()?.hashCode() ?: 0)
+        return result
+    }
 }
 
 /**
@@ -333,6 +360,18 @@ class Pedido(
         require(nuevoEstado == siguiente) { "Transición de estado inválida." }
         estado = nuevoEstado
     }
+
+    /**
+     * PASO 4 (Declaraciones de Desestructuración):
+     * Permite la desestructuración de un objeto Pedido para extraer directamente
+     * el cliente, los productos incluidos y el total del pedido en variables individuales:
+     * val (cliente, productos, total) = pedido
+     */
+    operator fun component1(): Cliente = cliente
+    operator fun component2(): List<Producto> = productos
+    operator fun component3(): Double = total
+    operator fun component4(): String = id
+    operator fun component5(): String = estado
 
     /**
      * PASO 5 y 6: Presentación del resumen detallado y ordenado del pedido.
@@ -774,9 +813,10 @@ private fun ejecutarMenu() {
             8. Reponer ingrediente
             9. Inspeccionar clases con Reflection (Paso 2)
             10. Probar sobrecarga de operadores (+ y ==) (Paso 3)
+            11. Probar desestructuración de objetos (Cliente y Pedido) (Paso 4)
             0. Salir
         """.trimIndent())
-        when (leerEntero("Opción: ", 0, 10)) {
+        when (leerEntero("Opción: ", 0, 11)) {
             1 -> tomarPedido(catalogo, inventario)?.let { pedidos += it }
             2 -> inventario.forEach { (ingrediente, cantidad) ->
                 val estado = if (cantidad > 5) "Óptimo" else if (cantidad > 0) "Bajo" else "Agotado"
@@ -825,6 +865,11 @@ private fun ejecutarMenu() {
                 val demoCliente = Cliente("Carolina Delgado", "+56 (991) 234-5678", "carolina.delgado@duocuc.cl", "Av. Principal 123")
                 demostrarSobrecargaOperadores(catalogo, demoCliente)
             }
+            11 -> {
+                val demoCliente = Cliente("Carolina Delgado", "+56 (991) 234-5678", "carolina.delgado@duocuc.cl", "Av. Principal 123")
+                val demoPedido = Pedido(cliente = demoCliente, productos = listOf(catalogo[0], catalogo[4]), notas = "Demostración Desestructuración")
+                demostrarDesestructuracion(demoPedido)
+            }
             0 -> return
         }
     }
@@ -871,6 +916,13 @@ private fun registrarPedido(
     if (!reservarIngredientes(productos.flatMap { it.ingredientes }, inventario)) return null
     val pedido = Pedido(cliente = cliente, productos = productos.toList(), notas = notas)
     cliente.email?.let { println("Confirmación simulada para $it | Pedido #${pedido.id.take(8)}") }
+
+    // PASO 4 (Desestructuración): Demostración en el flujo de pedidos
+    val (clienteDestructurado, productosDestructurados, totalDestructurado) = pedido
+    val (nombreCli, correoCli, telCli) = clienteDestructurado
+    println("📦 [Desestructuración]: Pedido #${pedido.id.take(8)} registrado para $nombreCli (Tel: $telCli, Email: $correoCli)")
+    println("   -> Total productos: ${productosDestructurados.size} unidades | Monto: $$${String.format(Locale.US, "%.2f", totalDestructurado)}")
+
     println(pedido.generarResumen())
     return pedido
 }
@@ -915,6 +967,34 @@ private fun reponerIngrediente(inventario: MutableMap<String, Int>) {
     val cantidad = leerCantidadEnRango("Unidades a reponer (1 a 100): ")
     inventario[ingrediente] = stock + cantidad
     println("Reposición registrada | $ingrediente | ${inventario[ingrediente]} unidades")
+}
+
+/**
+ * PASO 4 (Declaraciones de Desestructuración):
+ * Demuestra explícitamente en consola la desestructuración funcional de las entidades
+ * Cliente y Pedido, extrayendo sus propiedades en variables individuales según la pauta.
+ */
+fun demostrarDesestructuracion(pedido: Pedido) {
+    println("\n============================================================")
+    println("📦 [PASO 4: DECLARACIONES DE DESESTRUCTURACIÓN] DEMOSTRACIÓN")
+    println("============================================================")
+
+    // 1. Desestructuración de Cliente: val (nombre, correo, telefono) = cliente
+    val (nombreCli, correoCli, telCli) = pedido.cliente
+    println("1️⃣  DESESTRUCTURACIÓN DE OBJETO CLIENTE:")
+    println("   Declaración ejecutada: val (nombre, correo, telefono) = cliente")
+    println("   -> Variable 'nombre':   $nombreCli")
+    println("   -> Variable 'correo':   $correoCli")
+    println("   -> Variable 'telefono': $telCli")
+
+    // 2. Desestructuración de Pedido: val (cliente, productos, total) = pedido
+    val (clienteExtraido, prodsExtraidos, totalExtraido) = pedido
+    println("\n2️⃣  DESESTRUCTURACIÓN DE OBJETO PEDIDO:")
+    println("   Declaración ejecutada: val (cliente, productos, total) = pedido")
+    println("   -> Variable 'cliente':   ${clienteExtraido.nombre} (${clienteExtraido.email})")
+    println("   -> Variable 'productos': ${prodsExtraidos.size} unidades [${prodsExtraidos.joinToString { it.nombre }}]")
+    println("   -> Variable 'total':     $$${String.format(Locale.US, "%.2f", totalExtraido)}")
+    println("============================================================\n")
 }
 
 /**
@@ -979,4 +1059,7 @@ private fun demostrar(
 
     // Demostración de sobrecarga de operadores (+ y ==)
     demostrarSobrecargaOperadores(catalogo, cliente)
+
+    // Demostración de desestructuración (Cliente y Pedido)
+    pedidos.firstOrNull()?.let { demostrarDesestructuracion(it) }
 }
