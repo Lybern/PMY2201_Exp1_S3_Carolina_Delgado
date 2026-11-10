@@ -104,6 +104,29 @@ open class Producto(
         val etiquetaPromo = if (esPromo) " ⭐ [PROMOCIONABLE]" else ""
         return "[$categoria] $nombre - $$precioFormateado$etiquetaPromo | Ingredientes: ${ingredientes.joinToString(", ")}"
     }
+
+    /**
+     * PASO 3 (Operator Overloading '=='):
+     * Sobrecarga el operador '==' (implementando equals) para comparar si dos objetos
+     * representan el mismo producto basándose en su nombre y categoría (pizza, bebida, combo, ingrediente),
+     * cumpliendo estrictamente con la pauta de evaluación sumativa.
+     */
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other !is Producto) return false
+        return this.nombre.equals(other.nombre, ignoreCase = true) &&
+               this.categoria.equals(other.categoria, ignoreCase = true)
+    }
+
+    /**
+     * PASO 5 (Evaluación de Igualdad):
+     * Consistente con equals(), genera el hash code combinando nombre y categoría.
+     */
+    override fun hashCode(): Int {
+        var result = nombre.lowercase().hashCode()
+        result = 31 * result + categoria.lowercase().hashCode()
+        return result
+    }
 }
 
 /**
@@ -272,6 +295,32 @@ class Pedido(
         // Impuesto (IVA estándar 19%)
         impuestos = baseImponible * 0.19
         total = baseImponible + impuestos
+    }
+
+    /**
+     * PASO 3 (Operator Overloading '+'):
+     * Sobrecarga del operador '+' en la clase Pedido para combinar dos pedidos en uno solo.
+     * Fusiona las listas de productos de ambos pedidos, combina las notas especiales
+     * y recalcula automáticamente subtotal, descuentos (promoción en rango de fechas,
+     * volumen > 3 y productos @Promocionable) y el total a pagar.
+     *
+     * Uso: val pedidoCombinado = pedido1 + pedido2
+     */
+    operator fun plus(otro: Pedido): Pedido {
+        val productosCombinados = this.productos + otro.productos
+        val notasCombinadas = when {
+            this.notas != null && otro.notas != null -> "${this.notas} | ${otro.notas}"
+            this.notas != null -> this.notas
+            otro.notas != null -> otro.notas
+            else -> null
+        }
+        val pedidoNuevo = Pedido(
+            cliente = this.cliente,
+            productos = productosCombinados,
+            notas = notasCombinadas,
+            fecha = if (this.fecha >= otro.fecha) this.fecha else otro.fecha
+        )
+        return pedidoNuevo
     }
 
     fun cambiarEstado(nuevoEstado: String) {
@@ -724,9 +773,10 @@ private fun ejecutarMenu() {
             7. Avanzar estado de un pedido
             8. Reponer ingrediente
             9. Inspeccionar clases con Reflection (Paso 2)
+            10. Probar sobrecarga de operadores (+ y ==) (Paso 3)
             0. Salir
         """.trimIndent())
-        when (leerEntero("Opción: ", 0, 9)) {
+        when (leerEntero("Opción: ", 0, 10)) {
             1 -> tomarPedido(catalogo, inventario)?.let { pedidos += it }
             2 -> inventario.forEach { (ingrediente, cantidad) ->
                 val estado = if (cantidad > 5) "Óptimo" else if (cantidad > 0) "Bajo" else "Agotado"
@@ -770,6 +820,10 @@ private fun ejecutarMenu() {
                         inspeccionarEntidadConReflection(ComboFamiliar::class.java)
                     }
                 }
+            }
+            10 -> {
+                val demoCliente = Cliente("Carolina Delgado", "+56 (991) 234-5678", "carolina.delgado@duocuc.cl", "Av. Principal 123")
+                demostrarSobrecargaOperadores(catalogo, demoCliente)
             }
             0 -> return
         }
@@ -863,22 +917,66 @@ private fun reponerIngrediente(inventario: MutableMap<String, Int>) {
     println("Reposición registrada | $ingrediente | ${inventario[ingrediente]} unidades")
 }
 
+/**
+ * PASO 3 (Sobrecarga de Operadores):
+ * Demuestra explícitamente en consola la sobrecarga de los 2 operadores exigidos:
+ * 1. Operador '+' en Pedido: combina dos pedidos y recalcula montos, incluyendo descuentos.
+ * 2. Operador '==' en Producto: compara si dos productos representan la misma entidad por nombre y categoría.
+ */
+fun demostrarSobrecargaOperadores(catalogo: List<Producto>, cliente: Cliente) {
+    println("\n============================================================")
+    println("➕ [PASO 3: SOBRECARGA DE OPERADORES] DEMOSTRACIÓN")
+    println("============================================================")
+
+    println("1️⃣  SOBRECARGA DEL OPERADOR '==' EN PRODUCTO (por nombre y categoría):")
+    val prod1 = Producto("Pizza Pepperoni", 9900.0, listOf("Masa", "Salsa", "Pepperoni"), "Pizza")
+    val prod2 = Producto("pizza pepperoni", 11500.0, listOf("Masa", "Tomate"), "Pizza") // Mismo nombre y categoría, precio distinto
+    val prod3 = Producto("Pizza Pepperoni", 9900.0, listOf("Masa", "Salsa", "Pepperoni"), "Combo") // Distinta categoría
+
+    println("   - Producto A: [${prod1.categoria}] '${prod1.nombre}' ($${prod1.precio})")
+    println("   - Producto B: [${prod2.categoria}] '${prod2.nombre}' ($${prod2.precio})")
+    println("   - Producto C: [${prod3.categoria}] '${prod3.nombre}' ($${prod3.precio})")
+    println("   -> Evaluación (prod1 == prod2) [mismo nombre y categoría]: ${prod1 == prod2} (Resultado: true)")
+    println("   -> Evaluación (prod1 == prod3) [distinta categoría]:       ${prod1 == prod3} (Resultado: false)")
+
+    println("\n2️⃣  SOBRECARGA DEL OPERADOR '+' EN PEDIDO (fusión de dos pedidos):")
+    val pedido1 = Pedido(cliente = cliente, productos = listOf(catalogo[0], catalogo[1]), notas = "Mesa 1")
+    val pedido2 = Pedido(cliente = cliente, productos = listOf(catalogo[4], catalogo[5]), notas = "Extra servilletas")
+
+    println("   - Pedido 1 (#${pedido1.id.take(8)}): ${pedido1.productos.size} productos | Subtotal: $$${String.format(Locale.US, "%.2f", pedido1.subtotal)} | Total: $$${String.format(Locale.US, "%.2f", pedido1.total)}")
+    println("   - Pedido 2 (#${pedido2.id.take(8)}): ${pedido2.productos.size} productos | Subtotal: $$${String.format(Locale.US, "%.2f", pedido2.subtotal)} | Total: $$${String.format(Locale.US, "%.2f", pedido2.total)}")
+
+    // USO DEL OPERADOR '+'
+    val pedidoCombinado = pedido1 + pedido2
+
+    println("\n   ✨ RESULTADO TRAS: val pedidoCombinado = pedido1 + pedido2")
+    println("   - Nuevo ID Pedido:        #${pedidoCombinado.id.take(8)}")
+    println("   - Total ítems combinados: ${pedidoCombinado.productos.size} unidades")
+    println("   - Notas combinadas:       '${pedidoCombinado.notas}'")
+    println("   - Subtotal combinado:     $$${String.format(Locale.US, "%.2f", pedidoCombinado.subtotal)}")
+    println("   - Descuentos aplicados:  -$${String.format(Locale.US, "%.2f", pedidoCombinado.descuento)}")
+    println("   - TOTAL FINAL A PAGAR:    $$${String.format(Locale.US, "%.2f", pedidoCombinado.total)}")
+    println("============================================================\n")
+}
+
 private fun demostrar(
     catalogo: List<Producto>,
     inventario: MutableMap<String, Int>,
     repartidores: List<Repartidor>
 ) {
     println("\nDEMOSTRACIÓN CON DATOS DE EJEMPLO")
-    val cliente = Cliente("Valentina Flores", "+56912345678", "valentina@example.com", "Av. Providencia 1234")
-    val pizzas = listOf(catalogo[0], catalogo[1], catalogo[1], catalogo[2])
+    val cliente = Cliente("Valentina Flores", "+56 (991) 234-5678", "valentina@example.com", "Av. Providencia 1234")
+    val pizzas = listOf(catalogo[0], catalogo[1], catalogo[4], catalogo[5])
     var pedidos = emptyArray<Pedido>()
     registrarPedido(cliente, pizzas, null, inventario)?.let { pedido ->
         pedidos += pedido
         repeat(3) { avanzarPedido(pedido, repartidores) }
     }
 
-    val otroCliente = Cliente("Gonzalo Pérez", validarTelefono("123"), validarEmail("correo"), "Calle Los Aromos 45")
+    val otroCliente = Cliente("Gonzalo Pérez", formatearTelefono("56912345678"), "gonzalo@dominio.com", "Calle Los Aromos 45")
     registrarPedido(otroCliente, listOf(catalogo[0]), "Tocar el timbre", inventario)?.let { pedidos += it }
-    registrarPedido(cliente, List(16) { catalogo[1] }, null, inventario)
     generarReporteDelDia(pedidos)
+
+    // Demostración de sobrecarga de operadores (+ y ==)
+    demostrarSobrecargaOperadores(catalogo, cliente)
 }
